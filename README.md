@@ -5,3 +5,5 @@ Run this script in the home directory, containing the INCAR file and each image 
 The reaction coordinate is normalized so that the image in directory 00/ is at 0.0 and the image in directory images+1/ is at 1.0. Energies are plotted relative to the minimum energy in the MEP series.
 
 Example of intended usage: python mep_energy or python mep_energy -i my_mep_directory
+
+Compatible with VASP 5.4.4, Python 2.7.13 and 3.6.5, and VTST 3.2.
