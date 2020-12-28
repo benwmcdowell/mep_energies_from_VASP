@@ -20,17 +20,20 @@ def mep_energies(filepath,save,plot_type):
         except ValueError:
             pass
     images+=1
-    #energies and reaction coordinates (rc) are stored as: [[initial energy, final energy] for i in range(images)]
     energies=array([[0.0,0.0] for i in range(images)])
     rc=array([[0.0,0.0] for i in range(images)])
     try:
         for i in range(images):
+            counter=0
             with open('./'+str('{:02d}'.format(i))+'/OUTCAR','r') as file:
                 for line in file:
                     if 'TOTEN' in line:
-                        if i==1:
+                        if counter==0 and i!=0 and i!=images-1:
+                            energies[i][0]=float(line.split()[4])
+                        elif i==0 or i==images-1:
                             energies[i][0]=float(line.split()[4])
                         energies[i][1]=float(line.split()[4])
+                        counter+=1
                     #the reaction coordinate output using the default VASP optimizer
                     elif 'left and right image' in line:
                         rc[i]=float(line.split()[4])+rc[i-1]
@@ -44,12 +47,10 @@ def mep_energies(filepath,save,plot_type):
     except IOError:
         print('something wrong with subdirectory OUTCAR files')
         sys.exit(1)
-    
-    #reaction coordinates are normalized to the range [0,1]
-    #energies are plotted relative to the minimum energy among the mep images
     for i in range(2):
         rc[:,i]=rc[:,i]/rc[-1][i]
         energies[:,i]=energies[:,i]-min(energies[:,i])
+
     
     if save==True:
         with open('./mep_energies','w') as output:
